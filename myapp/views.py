@@ -185,10 +185,9 @@ def display_page_or_query_data(request, query):
         events_with_details.append(event_with_details)
 
     get_conn.close()
-    if request.is_ajax():
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return JsonResponse({'events': events_with_details})
     else:
-        # 如果不是 AJAX 请求，返回渲染好的 HTML 页面
         return {'events': events_with_details}
 
 
