@@ -123,8 +123,11 @@
                 <div class="input-group mb-3">
                     <input type="text" id="searchInput" class="form-control" style="max-width: 200px;" placeholder="目前只能搜尋UID" aria-label="Recipient's username" aria-describedby="button-addon2">
                     <button type="button" class="btn btn-success" id="searchButton" >搜尋</button>
+                    {% if user.is_authenticated %}
+                    <!-- 用戶登入, 則顯示更新與刪除 -->
                     <button type="button" class="btn btn-secondary" id="updateButton">更新</button>
                     <button type="button" class="btn btn-danger" id="deleteButton">刪除</button>
+                    {% endif %}
                 </div>
             </div>
         </div>        

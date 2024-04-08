@@ -129,7 +129,6 @@ def operation(request):
 
 
 def display_page_or_query_data(request, query):
-    # print(request, 111111111111111)
     get_conn = sqlite3.connect('events.db')
     c = get_conn.cursor()
     query = request.GET.get('query', None)
