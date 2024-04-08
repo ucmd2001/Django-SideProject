@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+    <!-- Datatables CSS for Bootstrap 5 -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/dataTables.bootstrap5.min.css">
+
+    {% load static %}
+
+    <!-- jQuery -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <!-- Bootstrap Bundle JS (includes Popper) -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Datatables JS -->
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+
+    <!-- Datatables Bootstrap 5 JS -->
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap5.min.js"></script>
+
+    <!-- Custom JS -->
+    <script type="text/javascript" src="{% static 'myapp/js/index.js' %}"></script>
+
+    <style>
+        .container {
+            min-height: 100vh;
+        }
+        .userCard {
+          width: 150px;
+          border: none;
+          border-radius: 10px;
+          background-color: #fff;
+        }
+    
+        .logoutButton {
+          background-color: orange;
+          border-radius: 5px;
+          padding: 0px;
+          margin: 0px;
+        }
+    
+        .logoutButton a {
+          color: rgb(90, 90, 90);
+        }
+        .nav-link{
+          color: #fff !important;
+        }
+        #eventsTable td, #eventsTable th {
+        border: 1px solid #ddd;
+        }
+        #eventsTable {
+            border-collapse: collapse; 
+            width: 100%;
+        }
+        #eventsTable th, #eventsTable td {
+            padding: 8px; 
+        }
+        #eventsTable th {
+            background-color: #f2f2f2; 
+            text-align: left;
+        }
+        #eventsTable_wrapper .row{
+            border: 1px solid #ddd;
+        }
+
+      </style>
+</head>
+<body>
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-12">
+                <nav class="navbar navbar-expand-lg navbar-dark" style="
+                    background-color: #000;
+                    border-bottom: 3px solid rgb(53, 53, 53);
+                    padding-left: 15px;
+                ">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse ml-5 justify-content-between text-center" id="navbarSupportedContent">
+                        <ul class="navbar-nav mr-auto">
+                            <li id="homePage" class="nav-item">
+                            <a class="nav-link" href="/"><i class="fas fa-home"></i>&nbsp首頁</a>
+                            </li>
+                            <li class="systemPage nav-item"></li>
+                        </ul>
+                        <div class="userCard pt-1 pl-1" style=" margin-right: 10px;">
+                            <div class="d-flex align-items-center">
+                                <div class="ml-3 w-100">
+                                    <div class="mb-0 mt-0">
+                                    <h6 class="d-inline font-weight-bold">使用者</h6>
+                                    {% if user.is_authenticated %}
+                                    <!-- 如果用戶已登入，顯示登出按鈕 -->
+                                    {% csrf_token %}
+                                    <button class="d-inline ml-1 px-2 logoutButton">
+                                        <a href="/logout">登出</a>
+                                    </button>
+                                    {% else %}
+                                    <!-- 如果用戶未登入，顯示登入按鈕 -->
+                                    <button class="d-inline ml-1 px-2 logoutButton" onclick="showLoginModal()">
+                                        <a>登入</a>
+                                    </button>
+                                    {% endif %}
+                                    </div>
+                                    <div class="my-0 mr-3" style="background-color: rgb(238, 236, 236)">
+                                    <h6 class="px-2 pb-1">{{ username }}</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <div class="row d-flex justify-content-end mt-2">
+            <div class="col-4">
+                <h6>雙擊欄位可更新數據</h6>
+                <div class="input-group mb-3">
+                    <input type="text" id="searchInput" class="form-control" style="max-width: 200px;" placeholder="目前只能搜尋UID" aria-label="Recipient's username" aria-describedby="button-addon2">
+                    <button type="button" class="btn btn-success" id="searchButton" >搜尋</button>
+                    <button type="button" class="btn btn-secondary" id="updateButton">更新</button>
+                    <button type="button" class="btn btn-danger" id="deleteButton">刪除</button>
+                </div>
+            </div>
+        </div>        
+        <div class="row">
+            <div class="col-12 mt-3">
+                <table id="eventsTable" class="display" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="selectAll"/></th> <!-- 全选框 -->
+                            <th>UID</th>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Description</th>
+                            <th>Web Sales</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Shows</th> 
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for event in events %}
+                        <tr>
+                            <td><input type="checkbox" class="selectRow" data-uid="{{ event.UID }}"/></td> <!-- 行选择框 -->
+                            <td>{{ event.UID }}</td>
+                            <td>{{ event.title }}</td>
+                            <td>{{ event.category }}</td>
+                            <td>{{ event.descriptionFilterHtml|safe }}</td>
+                            <td><a href="{{ event.webSales }}" target="_blank">Ticket Link</a></td>
+                            <td>{{ event.startDate }}</td>
+                            <td>{{ event.endDate }}</td>
+                            <td>
+                                <button type="button" class="btn btn-info" data-bs-target="#exampleModal"  onclick="loadEventDetails('{{ event.UID }}')">
+                                    Show Details
+                                </button>
+                            </td>
+                        </tr>
+                        <div id="event-data-{{ event.UID }}" style="display: none;">
+                            {{ event.shows|safe }}
+                        </div>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="eventDetailsModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table" id="modalTable">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Location Name</th>
+                            <th>onSales</th>
+                            <th>price</th>
+                            <th>endTime</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+        </div>
+    </div>
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">用戶登入</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="loginForm">
+                    {% csrf_token %}
+                    <input type="text" id="username" placeholder="Username">
+                    <input type="password" id="password" placeholder="Password">
+                    <button class="btn btn-info" type="submit">Login</button>
+                </form>
+                <div id="loginMessage"></div>
+                <div id="passwordHelp" class="form-text"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="regist" class="btn btn-success regist" data-bs-dismiss="modal">註冊</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+    </div>
+    <script>
+        $('#eventsTable').DataTable({
+            searching: false 
+        });
+    </script>
+</body>
+</html>
