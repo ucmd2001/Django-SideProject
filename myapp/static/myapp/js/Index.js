@@ -21,7 +21,8 @@ function showLoginModal() {
 function bindEditableEvents() {
     document.querySelectorAll('#eventsTable td').forEach(td => {
         td.addEventListener('dblclick', function () {
-            if (!this.classList.contains('uid-column')) { 
+            console.log(this.classList);
+            if (!this.classList.contains('uid-column')) {
                 if (!this.hasAttribute('contenteditable')) {
                     this.setAttribute('contenteditable', 'true');
                     this.classList.add("editable");
@@ -191,13 +192,13 @@ function searchEvents() {
         }
         return response.json();  
     })
-    .then(data => {  // 修改这里，将参数改为 data
-        console.log(data);  // 查看完整的数据结构
+    .then(data => {  
+        // console.log(data);
         var html = '';
         // 使用 data.events 访问事件数组
-        data.events.forEach(event => {  // 修改这里，使用 data.events 而不是 events
+        data.events.forEach(event => {  
             html += `<tr>
-                        <td>${event.UID}</td>
+                        <td class="uid-column">${event.UID}</td>
                         <td>${event.title}</td>
                         <td>${event.category}</td>
                         <td>${event.descriptionFilterHtml}</td>
@@ -209,12 +210,13 @@ function searchEvents() {
                                 Show Details
                             </button>
                             <div id="event-data-${event.UID}" style="display: none;">
-                                ${JSON.stringify(event.shows)}  <!-- 使用 JSON.stringify 来处理 shows 数组 -->
+                                ${JSON.stringify(event.shows)} 
                             </div>
                         </td>
                     </tr>`;
         });
         document.querySelector('#eventsTable tbody').innerHTML = html;
+        
         bindEditableEvents();
         bindSelectAllEvent();
     })

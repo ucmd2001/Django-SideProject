@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-!yjke*2hh9ae&ji@%q*fpm#7r9qpgr!)8md(s4_c2emzbosqo*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['99.99.99.99']
 
 
 # Application definition
@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'events.db',
+        'NAME':  os.path.join('/var/www/Django_sideproject/','events.db'),
     }
 }
 
@@ -129,6 +129,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # STATICFILES_DIRS = [
 #     os.path.join(BASE_DIR, 'static'),
