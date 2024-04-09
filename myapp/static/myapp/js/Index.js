@@ -17,14 +17,16 @@ function showLoginModal() {
     $('#loginModal').modal('show');  
 }
 
-
+// 綁定編輯表格
 function bindEditableEvents() {
     document.querySelectorAll('#eventsTable td').forEach(td => {
         td.addEventListener('dblclick', function () {
-            if (!this.hasAttribute('contenteditable')) {
-                this.setAttribute('contenteditable', 'true');
-                this.classList.add("editable");
-                this.focus();
+            if (!this.classList.contains('uid-column')) { 
+                if (!this.hasAttribute('contenteditable')) {
+                    this.setAttribute('contenteditable', 'true');
+                    this.classList.add("editable");
+                    this.focus();
+                }
             }
         });
 
@@ -34,6 +36,7 @@ function bindEditableEvents() {
     });
 }
 
+// 綁定選取表格
 function bindSelectAllEvent() {
     document.getElementById('selectAll').addEventListener('change', function() {
         document.querySelectorAll('.selectRow').forEach(checkbox => {

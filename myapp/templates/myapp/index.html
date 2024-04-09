@@ -137,7 +137,7 @@
                     <thead>
                         <tr>
                             <th><input type="checkbox" id="selectAll"/></th> <!-- 全选框 -->
-                            <th>UID</th>
+                            <th class="uid-column">UID</th>
                             <th>Title</th>
                             <th>Category</th>
                             <th>Description</th>
@@ -151,7 +151,7 @@
                         {% for event in events %}
                         <tr>
                             <td><input type="checkbox" class="selectRow" data-uid="{{ event.UID }}"/></td> <!-- 行选择框 -->
-                            <td>{{ event.UID }}</td>
+                            <td class="uid-column">{{ event.UID }}</td>
                             <td>{{ event.title }}</td>
                             <td>{{ event.category }}</td>
                             <td>{{ event.descriptionFilterHtml|safe }}</td>
