@@ -3,6 +3,7 @@ from django.shortcuts import render
 from .models import Event
 import sqlite3
 import json
+import os
 from django.contrib.auth import authenticate, login
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST,require_http_methods
@@ -24,7 +25,7 @@ def ajax_login(request):
         return JsonResponse({"success": True}, content_type='application/json')
     else:
         return JsonResponse({"success": False, "message": "Invalid username or password."})
-    
+
 
 @require_POST
 def create_user(request):
@@ -41,7 +42,7 @@ def create_user(request):
         user = User.objects.create_user(username, password)
         user.save()
         login(request, user)
-        print("success ")   
+        print("success ")
         return JsonResponse({"success": True, "message": "User created successfully."})
 
     except ValidationError as e:
@@ -50,7 +51,9 @@ def create_user(request):
 
 
 def show_events(request):
-    conn = sqlite3.connect('events.db')
+
+    db_path = os.path.join(settings.BASE_DIR, 'events.db')
+    conn = sqlite3.connect(db_path)
     c = conn.cursor()
 
     c.execute("SELECT * FROM Events")
@@ -130,7 +133,9 @@ def operation(request):
 
 
 def display_page_or_query_data(request, query):
-    get_conn = sqlite3.connect('events.db')
+    db_path = os.path.join(settings.BASE_DIR, 'events.db')
+    get_conn = sqlite3.connect(db_path)
+    #get_conn = sqlite3.connect('events.db')
     c = get_conn.cursor()
     query = request.GET.get('query', None)
     if query:
@@ -195,12 +200,14 @@ def display_page_or_query_data(request, query):
 def update_data(request):
     data = json.loads(request.body)
     events = data.get('events', [])
-    uptate_conn = sqlite3.connect('events.db')
-    cursor = uptate_conn.cursor()
+    db_path = os.path.join(settings.BASE_DIR, 'events.db')
+    update_conn = sqlite3.connect(db_path)
+    #uptate_conn = sqlite3.connect('events.db')
+    cursor = update_conn.cursor()
 
     for event_data in events:
         update_sql = '''
-        UPDATE Events 
+        UPDATE Events
         SET title = ?, category = ?, descriptionFilterHtml = ?, startDate = ?, endDate = ?
         WHERE UID = ?
         '''
@@ -213,9 +220,9 @@ def update_data(request):
             event_data['UID']
         ))
 
-        uptate_conn.commit()
-        uptate_conn.close()
-    
+        update_conn.commit()
+        update_conn.close()
+
     return JsonResponse({'status': 'success', 'message': 'Events updated successfully'})
 
 
@@ -226,7 +233,9 @@ def add_or_update_data(request):
 def delete_data(request):
     data = json.loads(request.body)
     UIDs = data.get('UIDs', [])
-    delete_conn = sqlite3.connect('events.db')
+    db_path = os.path.join(settings.BASE_DIR, 'events.db')
+    delete_conn = sqlite3.connect(db_path)
+    #delete_conn = sqlite3.connect('events.db')
     cursor = delete_conn.cursor()
 
     for uid in UIDs:
