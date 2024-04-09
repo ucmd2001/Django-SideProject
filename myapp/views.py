@@ -200,6 +200,7 @@ def display_page_or_query_data(request, query):
 def update_data(request):
     data = json.loads(request.body)
     events = data.get('events', [])
+    print(events)
     db_path = os.path.join(settings.BASE_DIR, 'events.db')
     update_conn = sqlite3.connect(db_path)
     #uptate_conn = sqlite3.connect('events.db')
